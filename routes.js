@@ -65,6 +65,17 @@ router.get('/search', async function(req, resp, next) {
   }
 })
 
+/* Show best customers */
+
+router.get('/best/', async (req, resp, next) => {
+  try {
+    const customers = await Customer.getBestCustomers()
+
+    return resp.render('customer_list.html', { customers })
+  } catch (err) {
+    return next(err)
+  }
+})
 
 /** Show a customer, given their ID. */
 

@@ -80,15 +80,16 @@ class Customer {
 
   static async getBestCustomers(count=10) {
     const results = await db.query(
-      `SELECT id, first_name, last_name, phone, notes
+      `SELECT id, first_name as "firstName", last_name AS "lastName", phone, notes
       FROM customers JOIN
-        (SELECT COUNT(*) AS Num_Reservations, customer_id
-        FROM reservations
-        GROUP BY customer_id) AS counts
+      (SELECT COUNT(*) AS Num_Reservations, customer_id
+      FROM reservations
+      GROUP BY customer_id) AS counts
       ON id = customer_id
       ORDER BY num_reservations DESC
-      LIMIT $1;`, count
-    )
+      LIMIT $1;`, [count]
+      )
+    console.log('foo')
 
     return results.rows.map(row => new Customer(row))
   }
