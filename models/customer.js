@@ -60,6 +60,39 @@ class Customer {
     return await Reservation.getReservationsForCustomer(this.id);
   }
 
+  /* Get customers by name */
+
+  static async getByName(name) {
+    const results = await db.query(
+      `SELECT id, 
+        first_name AS "firstName",
+        last_name AS "lastName",
+        phone, notes
+      FROM customers
+      WHERE last_name = $1 OR first_name = $1`,
+      [name]
+    )
+    
+    return results.rows.map(row => new Customer(row))
+  }
+
+  /* Get customers with most reservations */
+
+  static async getBestCustomers(count=10) {
+    const results = await db.query(
+      `SELECT id, first_name, last_name, phone, notes
+      FROM customers JOIN
+        (SELECT COUNT(*) AS Num_Reservations, customer_id
+        FROM reservations
+        GROUP BY customer_id) AS counts
+      ON id = customer_id
+      ORDER BY num_reservations DESC
+      LIMIT $1;`, count
+    )
+
+    return results.rows.map(row => new Customer(row))
+  }
+
   /** save this customer. */
 
   async save() {
