@@ -11,7 +11,7 @@ class Reservation {
   constructor({id, customerId, numGuests, startAt, notes}) {
     this.id = id;
     this.customerId = customerId;
-    this.numGuests = numGuests;
+    this._numGuests = numGuests;
     this.startAt = startAt;
     this.notes = notes;
   }
@@ -55,6 +55,18 @@ class Reservation {
         [this.customerId, this.numGuests, this.startAt, this.notes, this.id]
       )
     }
+  }
+
+  set numGuests(num) {
+    if (num < 1) {
+      throw new Error("Must have at least one guest")
+    }
+
+    this.numGuests = num
+  }
+
+  get numGuests() {
+    return this._numGuests
   }
 }
 
