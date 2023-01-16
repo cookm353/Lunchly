@@ -89,7 +89,6 @@ class Customer {
       ORDER BY num_reservations DESC
       LIMIT $1;`, [count]
       )
-    console.log('foo')
 
     return results.rows.map(row => new Customer(row))
   }
