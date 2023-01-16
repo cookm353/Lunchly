@@ -4,6 +4,7 @@ const express = require("express");
 
 const Customer = require("./models/customer");
 const Reservation = require("./models/reservation");
+const { ExpressError } = require('./expressError')
 
 const router = new express.Router();
 
@@ -45,6 +46,25 @@ router.post("/add/", async function(req, res, next) {
     return next(err);
   }
 });
+
+
+/* Search for customer by name */
+router.get('/search', async function(req, resp, next) {
+  try {
+    const { name } = req.query
+    
+    if (!name) {
+      throw new ExpressError("Name not found", 404)
+    }
+    
+    const customers = await Customer.getByName(name)
+    return resp.render('customer_list.html', { customers })
+
+  } catch (err) {
+    return next(err)
+  }
+})
+
 
 /** Show a customer, given their ID. */
 
