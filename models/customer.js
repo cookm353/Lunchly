@@ -64,15 +64,13 @@ class Customer {
 
   static async getByName(name) {
     const results = await db.query(
-      `SELECT id, 
-        first_name AS "firstName",
-        last_name AS "lastName",
-        phone, notes
+      `SELECT id, first_name AS "firstName", last_name AS "lastName", phone, notes
       FROM customers
-      WHERE last_name = $1 OR first_name = $1`,
+      WHERE to_tsvector($1) @@ to_tsquery(last_name) = 't' OR to_tsvector($1) @@ to_tsquery(first_name);`,
       [name]
     )
-    
+    const customers = results.rows.map(row => new Customer(row))
+    console.log(customers)
     return results.rows.map(row => new Customer(row))
   }
 
